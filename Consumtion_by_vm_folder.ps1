@@ -1,4 +1,5 @@
-﻿$sumdata = @()
+﻿Param([Parameter(Mandatory=$true)] $OutputFilePath)
+$sumdata = @()
 
 Write-Host "Getting all Folders" -ForegroundColor Yellow
  #get-datacenter | get-folder -type VM | where-object {$_.parent -like "Israel*"} | get-folder | where-object { $_.parent -like "vm*"} | 
@@ -28,4 +29,4 @@ get-datacenter | get-folder -type VM | where-object { $_.parent -like "vm*" -or 
 	@{N="TotalProvisionedSpaceGB";E={$VMs | Measure-Object -Property ProvisionedSpaceGB -Sum | Select-Object -ExpandProperty Sum}},
 	@{N="TotalVMs";E={$VMs | Measure-Object | Select-Object -ExpandProperty Count}}
 }
-$sumdata | Export-Csv f:\ilvc-sumdata.csv -NoTypeInformation
+$sumdata | Export-Csv $OutputFilePath -NoTypeInformation
