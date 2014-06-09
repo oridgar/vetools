@@ -1,13 +1,11 @@
 ﻿function Ignore-VCDSslErrors {
   <#
   .SYNOPSIS
-  Describe the function here
+  Ignore SSL errors for VCD, which accept all Certificates.
   .DESCRIPTION
   Describe the function in more detail
   .EXAMPLE
-  Give an example of how to use it
-  .EXAMPLE
-  Give another example of how to use it
+   Ignore-VCDSslErrors
   #>
 	add-type @"
 	    using System.Net;
@@ -42,9 +40,10 @@ function Get-BasicAuth ([Parameter(Mandatory=$true)] [System.Management.Automati
 
 
 function Connect-CIApi {
-param([Parameter(Mandatory=$false)] [string]$Org = "System",`
+param(#[Parameter(Mandatory=$false)] [string]$Org = "System",`
 	  [Parameter(Mandatory=$true)] [System.Management.Automation.PSCredential]$Credential,`
-	  [Parameter(Mandatory=$true)] [string]$server`
+	  [Parameter(Mandatory=$true)] [string]$server,`
+	  [Parameter(Mandatory=$false)] [string]$Version = "1.5"`
 	  )
   <#
   .SYNOPSIS
@@ -60,27 +59,32 @@ param([Parameter(Mandatory=$false)] [string]$Org = "System",`
   .PARAMETER logname
   The name of a file to write failed computer names to. Defaults to errors.txt.
   #>
+
 	Ignore-VCDSslErrors
 
-	# one string for basic authentication
-	#$auth = $username + "@" + $Org + ':' + $upassword
-	
-	#Encoding credentials
-	#$EncodedPassword = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($auth))
 	#Headers - credentials & VCD required data
+	$global:headers = @{}
 	$global:headers += Get-BasicAuth -Credential $Credential
-	$global:headers += @{"Accept"="application/*+xml;version=5.1"}
-	#$global:headers = @{"Authorization"="Basic $($EncodedPassword)";`
-	#			 		"Accept"="application/*+xml;version=5.1"}
+	$global:headers += @{"Accept"=("application/*+xml;version=" + $Version)}
+
+	#Returning result from function and saving session in global variable
 	
-	return Invoke-RestMethod -uri ("https://" + $server + "/api/sessions") -Method Post -Headers $headers -SessionVariable global:VCDSession
+	$vcdanswer = Invoke-RestMethod -uri ("https://" + $server + "/api/sessions") -Method Post -Headers $headers -SessionVariable global:VCDSession
+	# Saves the vcd server name in global variables.
+	if ($vcdanswer) {
+		[string]$global:vcdserver = $server
+	}
+	else {
+		#Delete the headers from global variables because connection hasn't succeed
+		$global:headers = $null
+	}
+	return $vcdanswer
 }
 
 function Invoke-VcdMethod {
-param([Parameter(Mandatory=$true)] [string]$server, `
-	  [Parameter(Mandatory=$true)] [string]$resource,`
+param([Parameter(Mandatory=$false)] [string]$resource,`
 	  [Parameter(Mandatory=$true)] [Microsoft.PowerShell.Commands.WebRequestMethod]$Method,`
-	  [string]$href`
+	  [Parameter(Mandatory=$false)] [string]$href`
 	  )
   <#
   .SYNOPSIS
@@ -99,9 +103,17 @@ param([Parameter(Mandatory=$true)] [string]$server, `
 	if (($global:headers -eq $null) -or ($global:vcdSession -eq $null)) {
 		Write-Error "No credentials. Please connect to API before by Connect-CIApi"
 	}
-	else {
+	elseif ((($server -eq $null) -or ($resource -eq $null)) -and $href -eq $null) {
+		Write-Error "No resource reference. Please provide server & resource or href"
+	}
+	#using href
+	elseif ($href) {
 		#headers is the credentials + api format and vcd version.
 		#websession is the session from the connection before
-		Invoke-RestMethod -Uri ("https://" + $server + "/api/" + $resource) -Method $Method -Headers $headers -WebSession $global:VCDSession
+		Invoke-RestMethod -Uri $href -Method $Method -Headers $headers -WebSession $global:VCDSession
+	}
+	#using resource
+	else {
+		Invoke-RestMethod -Uri ("https://" + $global:vcdserver + "/api/" + $resource) -Method $Method -Headers $headers -WebSession $global:VCDSession
 	}
 }
