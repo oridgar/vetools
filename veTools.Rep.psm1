@@ -37,7 +37,7 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 		catch [Exception] {
 				#Update existing VM in the table.
 				$SqlCmd.CommandText = "UPDATE dbo.PowerOffDetails " + `
-									  "SET Owner='{0}',VMName='{1}',vAppName='{2}',vAppuuid='{3}',OrgName='{4}',Date='{5}',actionExecuter='{6}'" `
+									  "SET Owner='{0}',VMName='{1}',vAppName='{2}',vAppuuid='{3}',OrgName='{4}',Date='{5}',LastLogin='{6}',actionExecuter='{7}' " `
 									  -f $currtask.Owner,$currtask.VMName,$currtask.vAppName,$currtask.vAppuuid,$currtask.OrgName,([datetime]::Parse($currtask.Date)).ToString(),$currtask.LastLogin,$currtask.actionExecuter + `
 									  "WHERE vmuuid = '{0}';" -f $currtask.VMuuid
 				$SqlCmd.ExecuteNonQuery()
