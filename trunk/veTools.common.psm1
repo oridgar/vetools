@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 *************************************************************************************#>
 
 
-﻿function Connect-SQLServer([string]$IP,[string]$InstanceName,[string]$Port,[string]$UserId,[string]$Password,[string]$DBName) {
+function Connect-SQLServer([string]$IP,[string]$InstanceName,[string]$Port,[string]$UserId,[string]$Password,[string]$DBName) {
 	$SqlConnection = New-Object System.Data.SqlClient.SqlConnection
 	$SqlConnection.ConnectionString = "Data Source=$IP\$InstanceName,$Port;User Id=$UserId;Password=$Password;Database=$DBName;"
 	
