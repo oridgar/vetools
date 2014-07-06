@@ -25,7 +25,7 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 	$SqlCmd.Connection = $SqlConnection
 
 	$lastpower = Get-CiPowerOffDetails  -OrgName "ENT_RnD" 
-	$lastpower = $lastpower | Sort-Object -Unique -Property vmuuid
+	$lastpower = $lastpower | Sort-Object -Unique -Property @{Expression="vmuuid"},@{Expression="Date"}
 
 	foreach ($currtask in $lastpower) {
 		#Insert new VM to the table.
