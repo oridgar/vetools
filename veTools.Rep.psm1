@@ -53,5 +53,4 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 	$SqlAdapter.Fill($DataSet)
 	 
 	$DataSet.Tables | ft
-	$SqlConnection.Close()
 }
