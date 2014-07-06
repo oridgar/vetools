@@ -16,20 +16,18 @@ You should have received a copy of the GNU General Public License
 along with Transmission Remote GUI; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 *************************************************************************************#>
-function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $global:DefaultSQLServer) {
-	
-	
+function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $global:DefaultSQLServer,[Parameter(Mandatory=$true)][String]$Orgname) {
 
 	#Building the command
 	$SqlCmd = New-Object System.Data.SqlClient.SqlCommand
 	$SqlCmd.Connection = $SqlConnection
 
-	$lastpower = Get-CiPowerOffDetails  -OrgName "ENT_RnD" 
+	$lastpower = Get-CiPowerOffDetails  -OrgName $Orgname
 	$lastpower = $lastpower | Sort-Object -Unique -Property @{Expression="vmuuid"},@{Expression="Date"}
 
 	foreach ($currtask in $lastpower) {
 		#Insert new VM to the table.
-		$SqlCmd.CommandText = "INSERT INTO dbo.PowerOffDetails VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')" -f $currtask.Owner,$currtask.VMName,$currtask.VMuuid,`
+		$SqlCmd.CommandText = "INSERT INTO dbo.PowerOffDetails (owner,vmname,vmuuid,vappname,vappuuid,orgname,date,lastlogin,actionexecuter) VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')" -f $currtask.Owner,$currtask.VMName,$currtask.VMuuid,`
 			$currtask.vAppName,$currtask.vAppuuid,$currtask.OrgName,([datetime]::Parse($currtask.Date)).ToString(),$currtask.LastLogin,$currtask.actionExecuter
 		#Trying to insert new record.
 		try {
@@ -39,8 +37,9 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 		catch [Exception] {
 				#Update existing VM in the table.
 				$SqlCmd.CommandText = "UPDATE dbo.PowerOffDetails " + `
-									  "SET Owner='{1}',VMName='{2}',vAppName='{3}',vAppuuid='{4}',OrgName='{5}',Date='{6}',actionExecuter='{7}' " + `
-									  "WHERE vmuuid = '{0}';" -f $currtask.VMuuid,$currtask.Owner,$currtask.VMName,$currtask.vAppName,$currtask.vAppuuid,$currtask.OrgName,([datetime]::Parse($currtask.Date)).ToString(),$currtask.LastLogin,$currtask.actionExecuter
+									  "SET Owner='{0}',VMName='{1}',vAppName='{2}',vAppuuid='{3}',OrgName='{4}',Date='{5}',actionExecuter='{6}'" `
+									  -f $currtask.Owner,$currtask.VMName,$currtask.vAppName,$currtask.vAppuuid,$currtask.OrgName,([datetime]::Parse($currtask.Date)).ToString(),$currtask.LastLogin,$currtask.actionExecuter + `
+									  "WHERE vmuuid = '{0}';" -f $currtask.VMuuid
 				$SqlCmd.ExecuteNonQuery()
 		}
 	}
