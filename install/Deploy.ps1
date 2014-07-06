@@ -14,7 +14,7 @@ $InstallDir = ("$($($env:PSModulePath).Split(';')[-1])")
 #	Write-Status $?
 #}
 
-$moduleNames = @("veTools","veSettings","veTools.Common","veTools.vcdRestAPI","veTools.LabManager")
+$moduleNames = @("veTools","veTools.Common","veTools.vcdRestAPI","veTools.LabManager","veTools.Rep")
 
 foreach ($module in $moduleNames) {
 	Write-Host "Copying $module module..." -NoNewline
