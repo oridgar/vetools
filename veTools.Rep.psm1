@@ -23,7 +23,7 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 	$SqlCmd.Connection = $SqlConnection
 
 	$lastpower = Get-CiPowerOffDetails  -OrgName $Orgname
-	$lastpower = $lastpower | Sort-Object -Unique -Property @{Expression="vmuuid"},@{Expression="Date"}
+	$lastpower = $lastpower | Sort-Object -Unique -Property @{Expression="vmuuid"},@{Expression="Date";Descending=$false}
 
 	foreach ($currtask in $lastpower) {
 		#Insert new VM to the table.
@@ -31,7 +31,10 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 			$currtask.vAppName,$currtask.vAppuuid,$currtask.OrgName,([datetime]::Parse($currtask.Date)).ToString(),$currtask.LastLogin,$currtask.actionExecuter
 		#Trying to insert new record.
 		try {
-			$SqlCmd.ExecuteNonQuery()
+			$result = $SqlCmd.ExecuteNonQuery()
+			if ($result -eq 1) {
+				Write-Host "New record has inserted"
+			}
 		}
 		#Exception following unique constraint
 		catch [Exception] {
@@ -40,17 +43,20 @@ function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $glo
 									  "SET Owner='{0}',VMName='{1}',vAppName='{2}',vAppuuid='{3}',OrgName='{4}',Date='{5}',LastLogin='{6}',actionExecuter='{7}' " `
 									  -f $currtask.Owner,$currtask.VMName,$currtask.vAppName,$currtask.vAppuuid,$currtask.OrgName,([datetime]::Parse($currtask.Date)).ToString(),$currtask.LastLogin,$currtask.actionExecuter + `
 									  "WHERE vmuuid = '{0}';" -f $currtask.VMuuid
-				$SqlCmd.ExecuteNonQuery()
+				$result = $SqlCmd.ExecuteNonQuery()
+				if ($result -eq 1) {
+					Write-Host "a record has updated "
+				}
 		}
 	}
 	#Adapter to execute query
-	$SqlAdapter = New-Object System.Data.SqlClient.SqlDataAdapter
-	$SqlCmd.CommandText = "select * from dbo.poweroffdetails"
-	$SqlAdapter.SelectCommand = $SqlCmd
+	#$SqlAdapter = New-Object System.Data.SqlClient.SqlDataAdapter
+	#$SqlCmd.CommandText = "select * from dbo.poweroffdetails"
+	#$SqlAdapter.SelectCommand = $SqlCmd
 	 
-	$DataSet = New-Object System.Data.DataSet
+	#$DataSet = New-Object System.Data.DataSet
 	 
-	$SqlAdapter.Fill($DataSet)
+	#$SqlAdapter.Fill($DataSet)
 	 
-	$DataSet.Tables | ft
+	#$DataSet.Tables | ft
 }
