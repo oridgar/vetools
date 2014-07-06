@@ -209,8 +209,9 @@ function Get-OrgTaskList ([Parameter(Mandatory=$true)]$OrgName) {
 }
 
 function Get-CiLastPowerOffTask([Parameter(Mandatory=$true)]$OrgName) {
-	return Get-OrgTaskList $OrgName | Sort-Object -Unique -Property operation | Sort-Object -Descending -Property starttime | `
-		Where-Object {$_.operationName -eq "jobUndeploy"}
+	#return Get-OrgTaskList $OrgName | Sort-Object -Unique -Property operation | Sort-Object -Descending -Property starttime | `
+	#	Where-Object {$_.operationName -eq "jobUndeploy"}
+	return Get-OrgTaskList $OrgName | Where-Object {$_.operationName -eq "jobUndeploy"}
 		
 		# include vapps
 		# Where-Object {$_.operationName -eq "vappUndeployPowerOff" -or $_.operationName -eq "jobUndeploy"}
