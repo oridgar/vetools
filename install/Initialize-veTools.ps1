@@ -50,3 +50,4 @@ Import-Module veTools
 Import-Module veTools.Common
 Import-Module veTools.vcdRestAPI
 Import-Module veTools.LabManager
+Import-Module veTools.Rep
