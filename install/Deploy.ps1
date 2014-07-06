@@ -1,3 +1,9 @@
+function Write-Status ([Parameter(Mandatory=$true)] [Boolean]$result)
+{
+  	$returncode = 0
+	if ($result -eq $TRUE) {write-host -ForegroundColor Green "[Succeed]"} else {write-host -ForegroundColor Red "[Failed!]"; $returncode = 1}
+}
+
 clear
 Write-Host "--------------------"
 Write-Host "veTools Installation"
@@ -23,11 +29,17 @@ foreach ($module in $moduleNames) {
 	$destinationFile = $("$InstallDir" + $module + '\')
 	New-Item -ItemType Directory -Path $destinationFile -ErrorAction SilentlyContinue
 	Copy-Item -Path $sourceFile -Destination $destinationFile 2>&1> $null
-	Write-Status $?
+	if ($? -eq $true) {
+		Write-Status $?
+	}
 	Copy-Item -Path $sourcepsd -Destination $destinationFile 2>&1> $null
 }
+
+#Copy excel templates to program data
+
 
 Write-Host "."
 Write-Host "Initializing veTools with the shell..." -NoNewline
 Copy-Item -Path "Initialize-PowerCLIEnvironment_Custom.ps1" -Destination "${env:ProgramFiles(x86)}\VMware\Infrastructure\vSphere PowerCLI\Scripts\" > $NULL
+Copy-Item -Path "Initialize-veTools.ps1" -Destination "${env:ProgramFiles(x86)}\VMware\Infrastructure\vSphere PowerCLI\Scripts\" > $NULL
 Write-Status $?
