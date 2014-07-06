@@ -1,6 +1,6 @@
-﻿function Set-powerOffDetails ([Parameter(Mandatory=$true)] [System.Security.SecureString]$Password) {
+﻿function Set-powerOffDetails ([Parameter(Mandatory=$false)]$SqlConnection = $global:DefaultSQLServer) {
 	
-	$SqlConnection = $global:DefaultSQLServer
+	
 
 	#Building the command
 	$SqlCmd = New-Object System.Data.SqlClient.SqlCommand
