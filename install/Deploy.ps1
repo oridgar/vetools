@@ -13,7 +13,7 @@ Write-Host "veTools version 0.2"
 Write-Host
 Write-Host
 # Checking if the folder exists
-$InstallDir = ("$($($env:PSModulePath).Split(';')[-1])")
+$InstallDir = ("$($($env:PSModulePath).Split(';')[1])")
 #if (!$InstallDir) {
 #	Write-Host "Creating veTools directory into modules directory..." -NoNewline
 #	mkdir $InstallDir
