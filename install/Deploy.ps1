@@ -14,6 +14,7 @@ Write-Host
 Write-Host
 # Checking if the folder exists
 $InstallDir = ("$($($env:PSModulePath).Split(';')[1])")
+Write-Host "InstallDir: $InstallDir"
 #if (!$InstallDir) {
 #	Write-Host "Creating veTools directory into modules directory..." -NoNewline
 #	mkdir $InstallDir
