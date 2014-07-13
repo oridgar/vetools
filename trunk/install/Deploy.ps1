@@ -41,6 +41,17 @@ foreach ($module in $moduleNames) {
 
 Write-Host "."
 Write-Host "Initializing veTools with the shell..." -NoNewline
-Copy-Item -Path "Initialize-PowerCLIEnvironment_Custom.ps1" -Destination "${env:ProgramFiles(x86)}\VMware\Infrastructure\vSphere PowerCLI\Scripts\" > $NULL
+
+
+#Getting custom file name
+$customfile = "${env:ProgramFiles(x86)}\VMware\Infrastructure\vSphere PowerCLI\Scripts\Initialize-PowerCLIEnvironment_Custom.ps1" 
+# check if the call for veTools exists
+
+if ((get-content $customfile | where-object {$_ -match "^\.\\Initialize-veTools.ps1$"}) -eq $null) {
+	#adding new line to the file.
+write-output ".\Initialize-veTools.ps1" >> $customfile
+
+}
+#Copy-Item -Path "Initialize-PowerCLIEnvironment_Custom.ps1" -Destination "${env:ProgramFiles(x86)}\VMware\Infrastructure\vSphere PowerCLI\Scripts\" > $NULL
 Copy-Item -Path "Initialize-veTools.ps1" -Destination "${env:ProgramFiles(x86)}\VMware\Infrastructure\vSphere PowerCLI\Scripts\" > $NULL
 Write-Status $?
