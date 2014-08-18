@@ -1351,3 +1351,11 @@ function New-VMPostgresSQL ([Parameter(Mandatory=$true,ValueFromPipeline=$true)]
 	
 	Invoke-VMScript -VM $vm -GuestCredential $GuestCredential -ScriptType Bash -ScriptText $InstScript
 }
+
+function Get-SnapshotDays ([Parameter(Mandatory=$true,ValueFromPipeline=$true)][VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl[]]$VM) {
+	$VM | Get-Snapshot | select created, name,vm,@{N="days";E={ (new-timespan -start ($_.created) -End (get-date)).days  }}
+}
+
+#function Get-SnapshotDays ([Parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$false)][VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl[]]$VM) {
+#	$VM
+#}
