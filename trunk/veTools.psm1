@@ -1358,4 +1358,10 @@ function Get-SnapshotDays ([Parameter(Mandatory=$true,ValueFromPipeline=$true)][
 
 #function Get-SnapshotDays ([Parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$false)][VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl[]]$VM) {
 #	$VM
-#}
+#}function Get-SnapshotDays ([Parameter(Mandatory=$true,ValueFromPipeline=$true)][VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl[]]$VM) {
+	$VM | Get-Snapshot | select created, name,vm,@{N="days";E={ (new-timespan -start ($_.created) -End (get-date)).days  }}
+}
+
+function Clear-viclientlogin () {
+  Set-ItemProperty -Path "HKCU:\Software\VMware\VMware Infrastructure Client\Preferences" -Name  "RecentConnections" -Value ""
+}
