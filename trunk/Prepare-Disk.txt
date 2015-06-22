@@ -1,0 +1,7 @@
+﻿"rescan" | diskpart
+$newDisk = get-disk | where-object {$_.OperationalStatus -eq "Offline"}
+$newDisk | Initialize-Disk
+$newDisk | New-Partition -AssignDriveLetter -UseMaximumSize
+$newDisk = Get-Disk $newDisk.Number
+$newPartition = Get-Partition $newDisk.Number | Select -last 1
+Format-Volume -DriveLetter $newPartition.DriveLetter -FileSystem NTFS -Confirm:$false
