@@ -1,3 +1,5 @@
+rem %1 - SSO FQDN
+rem %2 - SSO admin password
 c:
 rem Register Inventory Service with an other SSO
 cd "C:\program files\VMware\Infrastructure\Inventory Service\scripts"
