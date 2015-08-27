@@ -1830,14 +1830,14 @@ function Customize-VM (`
 
 
 	#Start building the customization spec structures / Data Objects.
-	$spec = New-Object “VMware.Vim.CustomizationSpec”
+	$spec = New-Object "VMware.Vim.CustomizationSpec"
 
-	$spec.Options = New-Object “VMware.Vim.CustomizationWinOptions”
+	$spec.Options = New-Object "VMware.Vim.CustomizationWinOptions"
 	$spec.Options.ChangeSID = $ChangeSID
 	$spec.Options.DeleteAccounts = $false
 
-	$spec.Identity = New-Object “VMware.Vim.CustomizationSysprep”
-	$spec.Identity.GuiUnattended = New-Object “VMware.Vim.CustomizationGuiUnattended"
+	$spec.Identity = New-Object "VMware.Vim.CustomizationSysprep"
+	$spec.Identity.GuiUnattended = New-Object "VMware.Vim.CustomizationGuiUnattended"
 	$spec.Identity.GuiUnattended.Password = New-Object "VMware.Vim.CustomizationPassword"
 	$spec.Identity.GuiUnattended.Password.Value = $Password
 	$spec.Identity.GuiUnattended.Password.PlainText = $true
@@ -1845,10 +1845,10 @@ function Customize-VM (`
 	$spec.Identity.GuiUnattended.TimeZone = 135
 	$spec.Identity.GuiUnattended.AutoLogon = $false
 	$spec.Identity.GuiUnattended.AutoLogonCount = 0
-	$spec.Identity.UserData = New-Object “VMware.Vim.CustomizationUserData"
+	$spec.Identity.UserData = New-Object "VMware.Vim.CustomizationUserData"
 	$spec.Identity.UserData.FullName = $FullName
 	$spec.Identity.UserData.OrgName = $OrgName
-	$spec.Identity.UserData.ComputerName = New-Object “VMware.Vim.CustomizationVirtualMachineName"
+	$spec.Identity.UserData.ComputerName = New-Object "VMware.Vim.CustomizationVirtualMachineName"
 	$spec.Identity.UserData.ProductId = $ProductID
 
 	$spec.Identity.Identification = New-Object "VMware.Vim.CustomizationIdentification"
@@ -1864,7 +1864,7 @@ function Customize-VM (`
 	$spec.Identity.LicenseFilePrintData.AutoUsers = 5
 
 	#Leave this empty
-	$spec.GlobalIPSettings = New-Object “VMware.Vim.CustomizationGlobalIPSettings”
+	$spec.GlobalIPSettings = New-Object "VMware.Vim.CustomizationGlobalIPSettings"
 
 	##$spec.NicSettingMap =  [VMware.Vim.CustomizationAdapterMapping[]] (@())
 	#Creating new array with size of 1 cell
@@ -1896,4 +1896,11 @@ function Rescan-VMHost ([String]$ClusterName) {
 		throw "Cluster not found"
 	}
 	$clusterMo | Get-VMHost | Get-VMHostStorage -RescanAllHba
+}
+
+function Convert-VimApiToVim ($MOR){
+	$newMOR = new-object VMware.Vim.ManagedObjectReference
+	$newMOR.type = $MOR.type
+	$newMOR.value = $MOR.value
+ 	return $newMOR
 }
