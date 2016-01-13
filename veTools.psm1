@@ -1720,7 +1720,7 @@ function Get-VMFilesPath([Parameter(Mandatory=$true,ValueFromPipeline=$true)]$VM
 
 function Test-IsVmExists ([Parameter(Mandatory=$true)]$VMName) {
 	process {
-		if ((Get-View -ViewType VirtualMachine -Filter @{"Name"="^$($VMName)$"} -Property @("Name")) -ne $null ) {
+		if ((Get-View -ViewType VirtualMachine -Filter @{"Name"="^$($VMName)$"} -Property @("OverallStatus")) -ne $null ) {
 			return $true
 		}
 		else {

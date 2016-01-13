@@ -67,11 +67,13 @@ function Test-IsVcConnected {
 	}
 }
 
-function Print-dashes ([int]$Count) {
+function Print-dashes ([int]$Count,[Switch]$NoNewline) {
 	for ($i=0; $i -lt $count; $i++) {
 		Write-Host "-" -NoNewline
 	}
-	Write-Host
+	if ($NoNewline -ne $true) {
+		Write-Host
+	}
 }
 
 function Test-IsNumeric ([String]$Object) {
